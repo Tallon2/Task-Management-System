@@ -150,3 +150,38 @@
 
 - `/api/tasks/project/{projectId}/sort`：
   - 按优先级 / 创建时间 排序
+## 代码实现关键点
+- 使用 **MyBatis-Plus** 提供的 `ServiceImpl`，极大简化 CRUD：
+
+  ```java
+  public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService
+  ```
+
+- 通过 `lambdaQuery()` 进行条件查询：
+
+  ```
+  this.lambdaQuery().eq(User::getUsername, username).one();
+  this.lambdaQuery().eq(User::getEmail, email).count();
+  ```
+
+- 使用 `JWT` 进行无状态用户认证。
+
+- 对操作加入 `事务`（`@Transactional`）确保数据一致性。
+
+- 使用 `统一返回封装` (`Result`) 统一前端接口返回。
+
+- #### redis缓存实现：
+
+- 例如：
+
+  - `GET /api/tasks/project/{projectId}/filter?status=todo&priority=high&sort=created_at`
+
+  由于任务筛选通常会重复（同一个用户或同一个项目成员多次筛选同样条件），引入 Redis 缓存可以显著降低数据库压力，提升响应速度。
+
+- 具体实现：
+
+  - 在 `TaskServiceImpl` 中使用 `@Cacheable`、`@CacheEvict`。
+
+  - 配置 `spring.cache.type=redis` 后，Spring Boot 自动使用 Redis。
+
+  - 在任务更新、删除后清理缓存
