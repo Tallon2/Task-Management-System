@@ -1,0 +1,44 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: tmsdemo
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tms?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: root
+  data:
+    redis:
+      host: 192.168.142.137
+      port: 6379
+      password: root
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 10s
+  jackson:
+    default-property-inclusion: non_null
+  jwt:
+    secret: "eW91ci0yNTYtYml0LXNlY3JldC1rZXktaGVyZS0xMjM0NTY3ODkwYWJjZGVm"  # Base64编码后的密钥
+    expiration: 86400
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+mybatis-plus:
+  type-aliases-package: com.tmsdemo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+
+logging:
+  level:
+    com.heima.tmsdemo: debug
+
